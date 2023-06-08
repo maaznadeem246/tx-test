@@ -1,0 +1,2 @@
+- NodeJS version 10.15.3 or newer.
+- Request package.
