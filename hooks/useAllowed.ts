@@ -20,16 +20,18 @@ const useAllowed = () => {
   let route1 = ['/users', '/subscriptions', '/merchants'];
   let routes2 = ['/questions', '/products', '/orders', '/staff', '/withdraws', '/reviews',]
   const allowedRoutes: Record<string, string[]> = {
-   
+    superAdmin: route1,
+    storeOwner: [...routes2, ...route1],
+    staff: [], 
   };
 
-  const [allowedRoutesState ,setAllowedRoutes] =  useState<Record<string, string[]>>(
-    {
-      superAdmin: route1,
-      storeOwner: [...routes2, ...route1],
-      staff: [], 
-    }
-  )
+  // const [allowedRoutesState ,setAllowedRoutes] =  useState<Record<string, string[]>>(
+  //   {
+  //     superAdmin: route1,
+  //     storeOwner: [...routes2, ...route1],
+  //     staff: [], 
+  //   }
+  // )
 
   const notIncluded = ['/login']
 
@@ -37,12 +39,12 @@ const useAllowed = () => {
     if (isAuthenticated) {
       if (role === 'superAdmin') {
    
-        allowedRoutesState.superAdmin.forEach((route) => {
+        allowedRoutes.superAdmin.forEach((route) => {
           router.prefetch(route);
         });
       } else if (role === 'storeOwner') {
      
-        allowedRoutesState.storeOwner.forEach((route) => {
+        allowedRoutes.storeOwner.forEach((route) => {
           router.prefetch(route);
         });
       } else if (role === 'staff') {
@@ -53,10 +55,11 @@ const useAllowed = () => {
             if(routes2.includes(permission)){
               console.log('here2')
               console.log(permission)
-              let alr:string[] = []
-              alr.push(permission);
-              setAllowedRoutes((prev) => ({...prev, staff:alr}))
-              console.log(role)
+              // let alr:string[] = [...allowedRoutesState.staff]
+              // alr.push(permission);
+              // setAllowedRoutes((prev) => ({...prev, staff:alr}))
+              allowedRoutes.staff.push(permission)
+              console.log(allowedRoutes)
                 router.prefetch(permission);
             }
 
@@ -73,11 +76,13 @@ const useAllowed = () => {
   
     if(isAuthenticated) {
         const currentRoute = pathName;
+        console.log(allowedRoutes)
+        console.log( (allowedRoutes.staff.includes(currentRoute) && role == 'staff'))
         const isAllowed =
-          ( (allowedRoutesState.superAdmin.includes(currentRoute) && role == 'superAdmin') ||
-          (allowedRoutesState.storeOwner.includes(currentRoute) && role == 'storeOwner')  ||
-          (allowedRoutesState.staff.includes(currentRoute) && role == 'staff') )   || (notIncluded.includes(currentRoute)) || currentRoute == '/';
-      
+          ( (allowedRoutes.superAdmin.includes(currentRoute) && role == 'superAdmin') ||
+          (allowedRoutes.storeOwner.includes(currentRoute) && role == 'storeOwner')  ||
+          (allowedRoutes.staff.includes(currentRoute) && role == 'staff') )   || (notIncluded.includes(currentRoute)) || currentRoute == '/';
+        console.log(isAllowed)
           isAllowedSetState(isAllowed)
 
         if (!isAllowed) {
@@ -86,13 +91,13 @@ const useAllowed = () => {
         }
     }
 
-  }, [allowedRoutesState,isAuthenticated]);
+  }, [allowedRoutes.staff.length,isAuthenticated]);
 
 
 
 
 
-  return {isAllowed,allowedRoutes: role && allowedRoutesState[role], role:role};
+  return {isAllowed,allowedRoutes: role && allowedRoutes[role], role:role};
     };
 
 export default useAllowed;
