@@ -1,4 +1,8 @@
-import Container from "../container/indext";
+
+import Link from "next/link";
+import Container from "../container";
+import { useAuthStore } from "@/store";
+import AuthActions from "./components";
 
 
 
@@ -6,17 +10,18 @@ import Container from "../container/indext";
 
 
 const Header =  () => {
+
     return (
         <Container>
-            <div className="flex justify-between ">
-                <div className="text-[2rem]">
+            <div className="flex justify-between items-center bg-primary p-3 px-5 text-white rounded-md ">
+                <Link href="/" className="text-[2rem]">
                     TX
-                </div>
+                </Link>
                 <div>
 
                 </div>
-                <div>
-                    login
+                <div className="">
+                    <AuthActions />
                 </div>
             </div>
         </Container>
